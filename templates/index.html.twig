@@ -1,0 +1,203 @@
+{% extends "base.html.twig" %}
+{% block stylesheets %}
+    <link href="{{ asset('css/mainPage.css') }}" rel="stylesheet">
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('js/jquery-3.7.1.js') }}"></script>
+{% endblock %}
+{% block body %}
+    <div class="header">
+        <div class="title">
+            <img class="umbrella"
+                 src="{{ asset('imgs/110-1104325_rain-rainfall-umbrella-svg-rain-umbrella-png-icon.png') }}">
+            <label class="siteName">Дождь будет?</label>
+        </div>
+        <div class="formWrap">
+            <form>
+                <input style="height: 44px; min-width: 160px; font-size: 20px; padding: 12px 20px; margin: 0 8px; box-sizing: border-box;" value="{{ loca | default("") }}" name="place" id="placeSearch"
+                       list="locations">
+                <datalist id="locations"></datalist>
+                <button id="btnSubmit" type="submit" class="button-31" style="max-width: 30px">Поиск</button>
+            </form>
+        </div>
+    </div>
+    <table class="mainContainer" style="display: flex">
+        <tr>
+            <td style="visibility: visible; position: absolute;" id="todayContainer">
+                <div class="infoContainer">
+                    <div class="today">
+                        {% if weather is defined %}
+                            <table style="display: flex">
+                                <tr style="display: flex; margin: auto">
+                                    <td>
+                                        <label class="location" style="font-size: 25px; position: relative">{{ weather.geo_object.country.name | default('')}}, {{ weather.geo_object.locality.name | default('')}}</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="margin: auto; display: flex">
+                                        <label class="temp" style="font-size: 115px">{{weather.fact.temp | default("") }}°C </label>
+                                        <img src="https://yastatic.net/weather/i/icons/funky/dark/{{ weather.fact.icon }}.svg" style="min-height: 105px; position: relative; margin-left: 10px">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="display: flex">
+                                        <label class="condition" style="font-size: 20px">{{ weather.fact.condition | default("") }}</label>
+                                    </td>
+                                </tr>
+                                <tr style="height: 150px">
+                                    <td>
+                                        <div class="scrollbarWeather">
+                                            {% for hour in weather.forecasts[0].hours %}
+                                                <div class="hour-forecast-item">
+                                                    <h1 style="font-family: Halogen; font-size: 30px; color: rgba(185,193,219,1);">
+                                                        {{ hour.hour }}:00
+                                                    </h1>
+                                                    <div class="current-temperature-container" style="position: relative; font-family: Halogen; color: rgba(185,193,219,1);font-size: 20px">
+                                                        <img src="https://yastatic.net/weather/i/icons/funky/dark/{{ hour.icon }}.svg">
+                                                        {{ hour.temp | default('нет информации') }}°C
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="display: flex">
+                                        <label class="wind">Скорость ветра: {{ weather.fact.wind_speed }}м/с</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="display: flex">
+                                        <label class="pressure">Давление: {{ weather.fact.pressure_mm }}мм рт.ст.</label>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        {% endif %}
+                    </div>
+                </div>
+            </td>
+            <td id="tomorrowContainer" style="visibility: hidden; position: absolute;">
+                <div class="infoContainer">
+                    <div class="tomorrow">
+                        {% if weather is defined %}
+                            <table style="display: flex">
+                                <tr style="display: flex; margin: auto">
+                                    <td>
+                                        <label class="location" style="font-size: 25px; position: relative">Завтра в: {{ weather.geo_object.country.name | default('')}}, {{ weather.geo_object.locality.name | default('')}}</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="margin: auto; display: flex">
+                                        <label class="temp" style="font-size: 115px">{{weather.forecasts[1].parts.day.temp_avg | default("") }}°C </label>
+                                        <img src="https://yastatic.net/weather/i/icons/funky/dark/{{ weather.forecasts[1].parts.day.icon }}.svg" style="min-height: 105px; position: relative; margin-left: 10px">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="display: flex">
+                                        <label class="condition" style="font-size: 20px">{{ weather.forecasts[1].parts.day.condition | default("") }}</label>
+                                    </td>
+                                </tr>
+                                <tr style="height: 150px">
+                                    <td>
+                                        <div class="scrollbarWeather">
+                                            {% for hour in weather.forecasts[1].hours %}
+                                                <div class="hour-forecast-item">
+                                                    <h1 style="font-family: Halogen; font-size: 30px; color: rgba(185,193,219,1);">
+                                                        {{ hour.hour }}:00
+                                                    </h1>
+                                                    <div class="current-temperature-container" style="position: relative; font-family: Halogen; color: rgba(185,193,219,1);font-size: 20px">
+                                                        <img src="https://yastatic.net/weather/i/icons/funky/dark/{{ hour.icon }}.svg">
+                                                        {{ hour.temp | default('нет информации') }}°C
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="display: flex">
+                                        <label class="wind">Скорость ветра: {{ weather.forecasts[1].parts.day.wind_speed }}м/с</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="display: flex">
+                                        <label class="pressure">Давление: {{ weather.forecasts[1].parts.day.pressure_mm }}мм рт.ст.</label>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        {% endif %}
+                    </div>
+                </div>
+            </td>
+            <td id="weakContainer" style="visibility: hidden; position: absolute;">
+                <div class="infoContainer">
+                    <div class="weak">
+                        {% if weather is defined %}
+                            <table style="display: flex">
+                                <tr style="display: flex; margin: auto">
+                                    <td>
+                                        <label class="location" style="font-size: 25px; position: relative">Неделя в: {{ weather.geo_object.country.name | default('')}}, {{ weather.geo_object.locality.name | default('')}}</label>
+                                    </td>
+                                </tr>
+
+                                <tr style="height: 150px">
+                                    <td>
+                                        <div class="scrollbarWeather" style="margin-top: 30px">
+                                            {% for i in 0..6 %}
+                                                <div class="hour-forecast-item" style="min-width: 92px; height: 87px">
+                                                    <h1 style="font-family: Halogen; font-size: 15px; color: rgba(185,193,219,1); max-width: 90px">
+                                                        {{ weather.forecasts[i].date | default('нет информации') }}
+                                                    </h1>
+                                                    <div class="current-temperature-container" style="position: relative; font-family: Halogen; color: rgba(185,193,219,1);font-size: 20px">
+                                                        <img src="https://yastatic.net/weather/i/icons/funky/dark/{{ weather.forecasts[i].parts.day.icon }}.svg">
+                                                        {{ weather.forecasts[i].parts.day.temp_avg }}°C
+                                                    </div>
+                                                    <div style="position: relative; font-family: Halogen; color: rgba(185,193,219,1);font-size: 15px">
+                                                        Влажность: {{ weather.forecasts[i].parts.day.humidity }}%
+                                                    </div>
+                                                </div>
+
+                                            {% endfor %}
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+
+                            </table>
+
+                        {% else %}
+                            <label>Ой, а тут ничего пока нет(</label>
+                            <img>
+                        {% endif %}
+                    </div>
+                </div>
+            </td>
+            <td>
+                <table class="days" style=" position: static; margin-left: 380px; margin-top: 22%">
+                    <tr>
+                        <td>
+                            <button class="button-31" id="todayWeather">Погода на сегодня</button>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="button-31" id="tomorrowWeather">Погода на завтра</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="button-31" id="weakWeather">Погода на неделю</button>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <script type="module" src="{{ asset('js/geolocator.js') }}"></script>
+{% endblock %}
