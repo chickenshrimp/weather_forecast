@@ -26,12 +26,12 @@ class WeatherAPIService
     ];
     function sendRequest(GeoLocation $coordinates, $api_key)
     {
-        $opts = ['http'=>['method' => "GET",
-            'header' => "X-Yandex-API-Key:{$api_key}", 'lang'=>"ru_RU", "limit"=>7]];
+        $opts = ['http'=>['method' => 'GET',
+            'header' => 'X-Yandex-Weather-Key: '. $api_key]];
         $context = stream_context_create($opts);
         $weather=file_get_contents
-        (("https://api.weather.yandex.ru/v2/forecast/?lat=".$coordinates->Longitude ."&lon="
-            .$coordinates->Latitude),false,$context);
+        ("https://api.weather.yandex.ru/v2/forecast?lat=".$coordinates->Longitude ."&lon="
+            .$coordinates->Latitude,false,$context);
 
         $weather = json_decode($weather);
 
